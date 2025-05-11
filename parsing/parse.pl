@@ -1,29 +1,22 @@
 % parsing/parse.pl
-
 parse(X) :- lines(X, []).
 
-lines(Input, Remaining) :-
-    line(Input, RestAfterLine),
-    (   RestAfterLine = [';' | RestAfterSemi],
-        lines(RestAfterSemi, Remaining)
-    ;   Remaining = RestAfterLine
+lines(S, Rem) :-
+    line(S, S1),
+    (   S1 = [';' | S2],
+        lines(S2, Rem)
+    ;   Rem = S1
     ).
 
-line(Input, Remaining) :-
-    num(Input, RestAfterNum),
-    (   RestAfterNum = [',' | RestAfterComma],
-        line(RestAfterComma, Remaining)
-    ;   Remaining = RestAfterNum
+line(S, Rem) :-
+    num(S, S1),
+    (   S1 = [',' | S2],
+        line(S2, Rem)
+    ;   Rem = S1
     ).
 
-num(Input, Rem) :- digits(Input, Rem).
-
-digits([D|T], Rem) :-
+num([D | T], Rem) :-
     digit(D),
-    (   digits(T, Rem)
-    ;   Rem = T
-    ).
+    ( num(T, Rem) ; Rem = T ).
 
-digits([], []).
-
-digit(D) :- member(D, ['0','1','2','3','4','5','6','7','8','9']).
+digit(D) :- memberchk(D, ['0','1','2','3','4','5','6','7','8','9']).
